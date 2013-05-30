@@ -1,13 +1,13 @@
 <!DOCTYPE html>
 <!-- 
 /**
-*  Blood Pressure Centiles: BB+ Authorization Page
+*  Blood Pressure Centiles: BB+ Pull Authorization Page
 -->
 <html lang="en">
 
   <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Blood Pressure Centiles SMART Application</title>
+    <title>Blood Pressure Centiles Sample BB+ Pull Application</title>
 
     <!-- BPC stylesheets-->
     <link rel="stylesheet" href="css/bpc-screen.css" type="text/css" media="screen" />
@@ -34,7 +34,7 @@
       </div>
       <div id="abbi" >
         <form>
-          Connect to your Automated Blue Button provider<br>
+          Connect to your Blue Button+ Pull data provider<br>
           <ul type='text' id='abbi-provider-select' name='abbi-provider'></ul><br><br>
         </form>
       </div>
@@ -70,7 +70,7 @@
 
         $.each(providers, function(i,v){
           $('#abbi-provider-select').append(
-          $("<li><a href='#'> "+v.name+"</a>" + 
+          $("<li><a href='"+v.oauth2.authorize_uri+"'> "+v.name+"</a>" + 
           "<em> "+v.description+"</em></li>").click(choose(i)))
           ;
         });
@@ -79,6 +79,7 @@
 
         function choose(i){
           return function(event){
+            event.preventDefault();
 
             var client = {
                 "client_name": "Blood Pressure Grapher",
