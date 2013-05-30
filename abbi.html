@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<!-- 
+/**
+*  Blood Pressure Centiles: BB+ Authorization Page
+-->
+<html lang="en">
+
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Blood Pressure Centiles SMART Application</title>
+
+    <!-- BPC stylesheets-->
+    <link rel="stylesheet" href="css/bpc-screen.css" type="text/css" media="screen" />
+
+    <!-- Standard JS Libraries -->
+    <script src="js/lib/jquery.js" type="text/javascript"></script>
+    <script src="bluebutton-client.js" type="text/javascript"></script>
+
+  </head>
+
+  <body>
+    <div id="main">
+      <!-- Page header -->
+      <div id="headings">
+        <table>
+          <tr>
+            <td align="left" valign="bottom"><div id="title">
+                
+              <a href="http://www.smartplatforms.org/" target="_blank"><img src="images/smart-logo.png" border="0" width="65" height="40" alt="SMART Logo" /></a>
+                Blood Pressure Centiles</div></td>
+            <td align="center" valign="bottom"><div id="patient-info"></div></td>
+          </tr>
+        </table>
+      </div>
+      <div id="abbi" >
+        <form>
+          Connect to your Automated Blue Button provider<br>
+          <ul type='text' id='abbi-provider-select' name='abbi-provider'></ul><br><br>
+        </form>
+      </div>
+      <script>
+
+        var providers = [{
+          "name": "Good Health Clinic",
+          "description": "Serving your health needs since 1899",
+          "url": "http://bbplus-ri.aws.af.cm",
+          "oauth2": {
+            "registration_uri": "http://bbplus-ri.aws.af.cm/register",
+            "authorize_uri": "http://bbplus-ri.aws.af.cm/authorize",
+            "token_uri": "http://bbplus-ri.aws.af.cm/token"
+          },
+          "bb_api":{
+            "summary": "http://bbplus-ri.aws.af.cm/api/bb/summary",
+            "search": "http://bbplus-ri.aws.af.cm/api/bb/search"
+          }
+          }, {
+          "name": "Local Testing Hospital",
+          "description": "Just on a developer's machine",
+          "url": "http://localhost:8080/openid-connect-server",
+          "oauth2": {
+            "registration_uri": "http://localhost:8080/openid-connect-server/register",
+            "authorize_uri": "http://localhost:8080/openid-connect-server/authorize",
+            "token_uri": "http://localhost:8080/openid-connect-server/token"
+          },
+          "bb_api":{
+            "summary": "http://localhost:8080/openid-connect-server/api/bb/summary",
+            "search": "http://localhost:8080/openid-connect-server/api/bb/search"
+          }
+        }];
+
+        $.each(providers, function(i,v){
+          $('#abbi-provider-select').append(
+          $("<li><a href='#'> "+v.name+"</a>" + 
+          "<em> "+v.description+"</em></li>").click(choose(i)))
+          ;
+        });
+
+        var url = window.location.href.substr(0,window.location.href.lastIndexOf("/")+1);
+
+        function choose(i){
+          return function(event){
+
+            var client = {
+                "client_name": "Blood Pressure Grapher",
+                "client_uri": window.location.origin,
+                "logo_uri": url + "icon.png",
+                "contacts": [
+                "plot-master@bpgrapher.org"
+                ],
+                "tos_uri": "https://bpgrapher.org/tos",
+                "redirect_uris": [ url+"index.html" ],
+                "response_types": ["token"],
+                "grant_types": ["implicit"],
+                "token_endpoint_auth_method": "none",
+                "scope":  "search summary"
+            };
+
+            BBClient.authorize({
+              client: client,
+              provider:providers[i]
+            });
+
+          };
+        };
+
+        function authorize(provider){
+          return function(client){
+
+          };
+        };
+
+      </script>
+    </body>
+
+  </html>
