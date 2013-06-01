@@ -57,21 +57,26 @@
   BBClient.authorize = function(params){
 
     // 1. register to obtain a client_id
-    $.ajax({
+    var post = {
       type: "POST",
+      headers: {"Authorization" : "Bearer " + params.preregistration_token},
       contentType: "application/json",
       url: params.provider.oauth2.registration_uri,
       data:JSON.stringify(params.client)
+    }
+    if (!params.preregistration_token){
+      delete post.headers;
+    }
 
-      // 2. then authorize to access records
-    }).success(function(client){
+    // 2. then authorize to access records
+    $.ajax(post).success(function(client){
 
       var state = Guid.newGuid();
       params.state = params.state || {};
       $.extend(params.state, {client: client, provider: params.provider});
       localStorage[state] = JSON.stringify(params.state);
 
-      redirect_to=params.provider.oauth2.authorize_uri + "?" + 
+      var redirect_to=params.provider.oauth2.authorize_uri + "?" + 
         "client_id="+client.client_id+"&"+
         "response_type=token&"+
         "scope="+(client.scope || "summary+search")+"&"+
