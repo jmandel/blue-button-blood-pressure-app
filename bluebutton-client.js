@@ -29,6 +29,31 @@
     window.location.hash="";
   }
 
+  BBClient.providers = function(registries, callback){
+
+    var requests = [];
+    $.each(registries, function(i, r){
+      requests.push($.ajax({
+        type: "GET",
+        url: r+"/.well-known/bb/providers.json"
+      }));
+    });
+
+    var providers = [];
+    $.when.apply(null, requests).then(function(){
+      $.each(arguments, function(responseNum, arg){
+        if (responseNum>=requests.length) {
+          return;
+        }
+        $.each(arg, function(i, provider){
+          providers.push(provider);
+        });
+      });
+      callback(providers);
+    });
+
+  };
+
   BBClient.authorize = function(params){
 
     // 1. register to obtain a client_id

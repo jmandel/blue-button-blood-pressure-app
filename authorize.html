@@ -25,8 +25,8 @@
         <table>
           <tr>
             <td align="left" valign="bottom"><div id="title">
-                
-              <a href="http://www.smartplatforms.org/" target="_blank"><img src="images/smart-logo.png" border="0" width="65" height="40" alt="SMART Logo" /></a>
+
+                <a href="http://www.smartplatforms.org/" target="_blank"><img src="images/smart-logo.png" border="0" width="65" height="40" alt="SMART Logo" /></a>
                 Blood Pressure Centiles</div></td>
             <td align="center" valign="bottom"><div id="patient-info"></div></td>
           </tr>
@@ -35,76 +35,54 @@
       <div id="abbi" >
         <form>
           Connect to your Blue Button+ Pull data provider<br>
+          <em id='loading'>Loading provider directory...</em>
           <ul type='text' id='abbi-provider-select' name='abbi-provider'></ul><br><br>
         </form>
       </div>
       <script>
 
-        var providers = [{
-          "name": "Good Health Clinic",
-          "description": "Serving your health needs since 1899",
-          "url": "http://bbplus-ri.aws.af.cm",
-          "oauth2": {
-            "registration_uri": "http://bbplus-ri.aws.af.cm/register",
-            "authorize_uri": "http://bbplus-ri.aws.af.cm/authorize",
-            "token_uri": "http://bbplus-ri.aws.af.cm/token"
-          },
-          "bb_api":{
-            "summary": "http://bbplus-ri.aws.af.cm/api/bb/summary",
-            "search": "http://bbplus-ri.aws.af.cm/api/bb/search"
-          }
-          }, {
-          "name": "Local Testing Hospital",
-          "description": "Just on a developer's machine",
-          "url": "http://localhost:8080/openid-connect-server",
-          "oauth2": {
-            "registration_uri": "http://localhost:8080/openid-connect-server/register",
-            "authorize_uri": "http://localhost:8080/openid-connect-server/authorize",
-            "token_uri": "http://localhost:8080/openid-connect-server/token"
-          },
-          "bb_api":{
-            "summary": "http://localhost:8080/openid-connect-server/api/bb/summary",
-            "search": "http://localhost:8080/openid-connect-server/api/bb/search"
-          }
-        }];
+        var registries = ["https://bbplus-static-registry.aws.af.cm"];
 
-        $.each(providers, function(i,v){
-          $('#abbi-provider-select').append(
-          $("<li><a href='"+v.oauth2.authorize_uri+"'> "+v.name+"</a>" + 
-          "<em> "+v.description+"</em></li>").click(choose(i)))
-          ;
+        BBClient.providers(registries, function(providers){
+          $("#loading").hide();
+          $.each(providers, function(i,v){
+            console.log(v);
+            $('#abbi-provider-select').append(
+            $("<li><a href='"+v.oauth2.authorize_uri+"'> "+v.name+"</a>" + 
+            "<em> "+v.description+"</em></li>").click(choose(v)));
+          });
         });
 
         var url = window.location.href.substr(0,window.location.href.lastIndexOf("/")+1);
 
-        function choose(i){
+        function choose(p){
           return function(event){
             event.preventDefault();
 
             var client = {
-                "client_name": "Blood Pressure Grapher",
-                "client_uri": window.location.origin,
-                "logo_uri": url + "icon.png",
-                "contacts": [
-                "plot-master@bpgrapher.org"
-                ],
-                "tos_uri": "https://bpgrapher.org/tos",
-                "redirect_uris": [ url+"index.html" ],
-                "response_types": ["token"],
-                "grant_types": ["implicit"],
-                "token_endpoint_auth_method": "none",
-                "scope":  "search summary"
+              "client_name": "Blood Pressure Grapher",
+              "client_uri": window.location.origin,
+              "logo_uri": url + "icon.png",
+              "contacts": [
+              "plot-master@bpgrapher.org"
+              ],
+              "tos_uri": "https://bpgrapher.org/tos",
+              "redirect_uris": [ url+"index.html" ],
+              "response_types": ["token"],
+              "grant_types": ["implicit"],
+              "token_endpoint_auth_method": "none",
+              "scope":  "search summary"
             };
 
             BBClient.authorize({
               client: client,
-              provider:providers[i]
+              provider:p
             });
 
           };
         };
 
-        </script>
+      </script>
     </body>
 
   </html>
