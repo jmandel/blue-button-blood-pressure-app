@@ -71,12 +71,13 @@
       $.extend(params.state, {client: client, provider: params.provider});
       localStorage[state] = JSON.stringify(params.state);
 
-      window.location.href=params.provider.oauth2.authorize_uri + "?" + 
+      redirect_to=params.provider.oauth2.authorize_uri + "?" + 
         "client_id="+client.client_id+"&"+
         "response_type=token&"+
-        "scope="+ (params.scope ? params.scope.join("+") : "summary+search")+"&"+
-        "redirect_uri="+url+"index.html&"+
+        "scope="+(client.scope || "summary+search")+"&"+
+        "redirect_uri="+client.redirect_uris[0]+"&"+
         "state="+state;
+      window.location.href = redirect_to;
     });
   };
 
