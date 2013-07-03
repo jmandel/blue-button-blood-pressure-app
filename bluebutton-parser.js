@@ -1,10 +1,4 @@
-/**
- * BlueButton.js
- */
-
-// v.0.0.11
-
-
+/* BlueButton.js -- 0.0.12 */
 
 // core.js - Essential shared functionality
 
@@ -163,7 +157,7 @@ var Core = function () {
   };
   
 }();
-
+;
 
 // allergies.js
 
@@ -378,7 +372,7 @@ var Allergies = function () {
   };
 
 }();
-
+;
 
 // demographics.js
 
@@ -486,7 +480,14 @@ var Demographics = function () {
     
     el = patient.tag('patient');
     data.dob = parseDate(el.tag('birthTime').attr('value'));
-    data.gender = el.tag('administrativeGenderCode').attr('displayName');
+    var gender = el.tag('administrativeGenderCode').attr('code');
+    var genders = {
+      'M': 'Male',
+      'F': 'Female',
+      'U': 'Undifferentiated'
+    };
+    data.gender =  genders[gender] || null;
+
     data.marital_status = el.tag('maritalStatusCode').attr('displayName');
     
     el = patient.tag('addr');
@@ -674,7 +675,7 @@ var Demographics = function () {
   };
 
 }();
-
+;
 
 // encounters.js
 
@@ -918,7 +919,7 @@ var Encounters = function () {
   };
 
 }();
-
+;
 
 // immunizations.js
 
@@ -1121,7 +1122,7 @@ var Immunizations = function () {
   };
 
 }();
-
+;
 
 // labs.js
 
@@ -1184,7 +1185,7 @@ var Labs = function () {
   };
   
   var processCCDA = function (xmlDOM) {
-    var data = [], results_data = [], el, entries, entry, results, result;
+    var data = [], results_data, el, entries, entry, results, result;
     
     el = xmlDOM.template('2.16.840.1.113883.10.20.22.2.3.1');
     entries = el.elsByTag('entry');
@@ -1200,6 +1201,7 @@ var Labs = function () {
           panel_code_system_name = el.attr('codeSystemName');
       
       results = entry.elsByTag('component');
+      results_data = [];
       
       for (var j = 0; j < results.length; j++) {
         result = results[j];
@@ -1314,7 +1316,7 @@ var Labs = function () {
   };
 
 }();
-
+;
 
 // medications.js
 
@@ -1326,7 +1328,7 @@ var Medications = function () {
   // properties
   
   // methods
-    var process = function (source, type) {
+  var process = function (source, type) {
     var raw, data = [];
     
     switch (type) {
@@ -1625,7 +1627,7 @@ var Medications = function () {
   };
 
 }();
-
+;
 
 // problems.js
 
@@ -1756,7 +1758,7 @@ var Problems = function () {
   };
 
 }();
-
+;
 
 // procedures.js
 
@@ -1969,7 +1971,7 @@ var Procedures = function () {
   };
   
 }();
-
+;
 
 // vitals.js
 
@@ -2024,7 +2026,7 @@ var Vitals = function () {
   };
   
   var processCCDA = function (xmlDOM) {
-    var data = [], results_data = [], el, entries, entry, results, result;
+    var data = [], results_data, el, entries, entry, results, result;
     
     el = xmlDOM.template('2.16.840.1.113883.10.20.22.2.4.1');
     
@@ -2037,6 +2039,7 @@ var Vitals = function () {
       var entry_date = parseDate(el.attr('value'));
       
       results = entry.elsByTag('component');
+      results_data = [];
       
       for (var j = 0; j < results.length; j++) {
         result = results[j];
@@ -2128,7 +2131,7 @@ var Vitals = function () {
   };
   
 }();
-
+;
 
 // bluebutton.js - The Public Object and Interface
 
